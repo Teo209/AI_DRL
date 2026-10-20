@@ -3,7 +3,7 @@ import warnings
 
 
 class Environment:
-    def __init__(self, width: float = 800, height: float = 600, target: tuple[float, float] | list[float] = (12.5, 500), target_radius: float = 5, max_speed: float = 5, max_steps: int = 1000):
+    def __init__(self, width: float = 800, height: float = 600, target: tuple[float, float] = (12.5, 500), target_radius: float = 10, max_speed: float = 5, max_steps: int = 1000):
         if width <= 3:
             raise ValueError("Window width must be bigger than 3!")
         
@@ -70,10 +70,10 @@ class Environment:
         return (self.position, self.speed, self.target_position)
 
 
-    def step(self, action: tuple[float, float] | list[float]):
+    def step(self, action: tuple[float, float]):
         if type(action) not in [tuple, list]:
             raise TypeError(f"Invalid action. Expected tuple or list, got {type(action)}.")
-            
+
         if len(action) != 2:
             raise ValueError(f"Invalid action. Expected 2 values, got {len(action)}.")
         
