@@ -1,0 +1,10 @@
+name: ai-drl
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.14
+  - pip
+  - pip:
+      - pygame-ce
