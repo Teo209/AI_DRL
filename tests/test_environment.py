@@ -69,3 +69,16 @@ class TestEnvironment(unittest.TestCase):
 
         self.assertEqual(env.position, (800, 301))
         self.assertEqual(env.speed, (0, 1))
+    
+    
+    def test_success(self):
+        env = Environment(target=(100, 100), target_radius=10)
+        
+        env.position = (100, 100)
+        self.assertTrue(env.is_success())
+        
+        env.position = (106, 108)
+        self.assertTrue(env.is_success())
+        
+        env.position = (111, 100)
+        self.assertFalse(env.is_success())
