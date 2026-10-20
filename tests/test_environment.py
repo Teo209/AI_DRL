@@ -82,3 +82,18 @@ class TestEnvironment(unittest.TestCase):
         
         env.position = (111, 100)
         self.assertFalse(env.is_success())
+
+    
+    def test_target_out_of_bounds(self):
+        env = Environment(target=(900, -20))
+        self.assertEqual(env.target_position, (799, 1))
+
+        env = Environment(target=(100, 200))
+        self.assertEqual(env.target_position, (100, 200))
+
+        env = Environment(target=(0, 600))
+        self.assertEqual(env.target_position, (1, 599))
+        
+        env = Environment(target=(100, 700))
+        self.assertEqual(env.target_position, (100, 599))
+

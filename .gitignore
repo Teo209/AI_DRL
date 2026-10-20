@@ -16,6 +16,7 @@ htmlcov/
 *.tmp
 *.bak
 
+.vscode
 .vscode/
 
 build/

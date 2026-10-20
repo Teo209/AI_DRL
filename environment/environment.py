@@ -1,15 +1,33 @@
 import math
+import warnings
 
 
 class Environment:
     def __init__(self, width = 800, height = 600, target = (12.5, 500), target_radius = 5):
+        if width <= 3:
+            raise ValueError("Window width must be bigger than 3!")
+        
+        if height <= 3:
+            raise ValueError("Window height must be bigger than 3!")
+        
+        target_x = max(1, min(target[0], width - 1))
+        target_y = max(1, min(target[1], height - 1))
+        
+        if tuple(target) != (target_x, target_y):
+            warnings.warn(f"Target out of bounds! Automaticaly moved to {target_x}, {target_y}.")
+            
+        if target_radius < 0:
+            raise ValueError("Target radius must be non-negative!")
+        
+        
         self.window_width = width
         self.window_height = height
         
         self.position = (width / 2, height / 2)
         self.speed = (0, 0)
         
-        self.target_position = target
+        self.target_position = (target_x, target_y)
+        
         self.target_radius = target_radius
         
     
