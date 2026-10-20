@@ -3,13 +3,22 @@ import warnings
 
 
 class Environment:
-    def __init__(self, width = 800, height = 600, target = (12.5, 500), target_radius = 5):
+    def __init__(self, width: float = 800, height: float = 600, target: tuple[float, float] | list[float] = (12.5, 500), target_radius: float = 5, max_speed: float = 5, max_steps: int = 1000):
         if width <= 3:
             raise ValueError("Window width must be bigger than 3!")
         
         if height <= 3:
             raise ValueError("Window height must be bigger than 3!")
         
+        if type(target) not in [tuple, list]:
+            raise TypeError(f"Invalid target. Expected tuple or list, got {type(target)}.")
+        
+        if len(target) != 2:
+            raise ValueError(f"Invalid target. Expected 2 coordinates, got {len(target)}.")
+        
+        if type(target[0]) not in [int, float] or type(target[1]) not in [int, float]:
+            raise TypeError(f"Target's values invalid. Expected float, got {type(target[0])} and {type(target[1])}.")
+                
         target_x = max(1, min(target[0], width - 1))
         target_y = max(1, min(target[1], height - 1))
         
@@ -19,6 +28,14 @@ class Environment:
         if target_radius < 0:
             raise ValueError("Target radius must be non-negative!")
         
+        if max_speed <= 0:
+            raise ValueError("Max speed must be greater than 0!")
+        
+        if type(max_steps) is not int:
+            raise TypeError(f"Max number of steps must be int, got {type(max_steps)}.")
+        
+        if max_steps < 1:
+            raise ValueError("Max number of steps must be greater than 0!")
         
         self.window_width = width
         self.window_height = height
@@ -29,6 +46,11 @@ class Environment:
         self.target_position = (target_x, target_y)
         
         self.target_radius = target_radius
+        
+        self.max_speed = max_speed
+        
+        self.max_steps = max_steps
+        self.steps = 0
         
     
     def is_success(self):
@@ -43,15 +65,29 @@ class Environment:
     def reset(self):
         self.position = (self.window_width / 2, self.window_height / 2)
         self.speed = (0, 0)
+        self.steps = 0
         
-        return (self.position, self.speed)
+        return (self.position, self.speed, self.target_position)
 
 
-    def step(self, action):
+    def step(self, action: tuple[float, float] | list[float]):
+        if type(action) not in [tuple, list]:
+            raise TypeError(f"Invalid action. Expected tuple or list, got {type(action)}.")
+            
+        if len(action) != 2:
+            raise ValueError(f"Invalid action. Expected 2 values, got {len(action)}.")
+        
+        if type(action[0]) not in [int, float] or type(action[1]) not in [int, float]:
+            raise TypeError(f"Action's values invalid. Expected float or int, got {type(action[0])} and {type(action[1])}.")
+        
+        
         delta_t = 1
         
         vx = self.speed[0] + action[0] * delta_t
         vy = self.speed[1] + action[1] * delta_t
+        
+        vx = max(-self.max_speed, min(vx, self.max_speed))
+        vy = max(-self.max_speed, min(vy, self.max_speed))
         
         x = self.position[0] + vx * delta_t
         y = self.position[1] + vy * delta_t
@@ -66,3 +102,19 @@ class Environment:
         
         self.speed = (vx, vy)
         self.position = (x, y)
+        
+        observation = (self.position, self.speed, self.target_position)
+        
+        self.steps += 1
+        
+        reward = -1
+        terminated = False
+        truncated = False
+        
+        if self.is_success():
+            reward = +100
+            terminated = True
+        elif self.steps >= self.max_steps:
+            truncated = True
+        
+        return (observation, reward, terminated, truncated)
