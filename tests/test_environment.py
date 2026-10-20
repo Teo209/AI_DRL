@@ -22,3 +22,50 @@ class TestEnvironment(unittest.TestCase):
         
         self.assertEqual(env.position, (600, 250))
         self.assertEqual(env.speed, (0, 0))
+        
+    def test_step(self):
+        env = Environment(800, 600)
+        
+        env.step((1, 0))
+        
+        self.assertEqual(env.speed, (1, 0))
+        self.assertEqual(env.position, (401, 300))
+        
+        env.step((1, 0))
+        self.assertEqual(env.speed, (2, 0))
+        self.assertEqual(env.position, (403, 300))
+        
+        
+    def test_move_from_edge(self):
+        env = Environment(800, 600)
+               
+        env.position = (0, 300)
+        env.speed = (0, 0)
+        
+        env.step((1, 0))
+        
+        self.assertEqual(env.position, (1, 300))
+        self.assertEqual(env.speed, (1, 0))
+
+
+    def test_edge_detection(self):
+        env = Environment(800, 600)
+        
+        env.position = (799, 300)
+        env.speed = (1, 0)
+
+        env.step((1, 0))
+        self.assertEqual(env.position, (800, 300))
+        self.assertEqual(env.speed, (0, 0))
+    
+    
+    def test_move_along_edge(self):
+        env = Environment(800, 600)
+
+        env.position = (800, 300)
+        env.speed = (0, 0)
+
+        env.step((0, 1))
+
+        self.assertEqual(env.position, (800, 301))
+        self.assertEqual(env.speed, (0, 1))
