@@ -4,13 +4,12 @@ from environment.render import Renderer
 environment = Environment(800, 600, (200, 350), 20, 5, 1000)
 renderer = Renderer(environment, (40, 40))
 
+try:
+    while renderer.running:
+        renderer.handle_events()
+        
+        renderer.render()
 
-while renderer.running:
-    renderer.handle_events()
-    
-    renderer.render()
-
-    renderer.clock.tick(60)
-    
-
-renderer.close()
+        renderer.clock.tick(60)
+finally:
+    renderer.close()

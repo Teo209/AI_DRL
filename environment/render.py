@@ -34,7 +34,7 @@ class Renderer:
         self.display.fill((255, 255, 217))
     
         pygame.draw.circle(self.display, (130, 130, 130), self.env.target_position, self.env.target_radius)
-        pygame.draw.circle(self.display, (0, 0, 0), self.env.target_position, self.env.target_radius/5)
+        pygame.draw.circle(self.display, (0, 0, 0), self.env.target_position, int(self.env.target_radius/5))
         
         pygame.draw.rect(self.display, (130, 255, 130), 
                          pygame.Rect(self.env.position[0] - self.character_size[0]/2 , 
