@@ -62,17 +62,21 @@ class Environment:
         return distance <= self.target_radius
     
     
+    def get_observation(self):
+        return (
+            (self.target_position[0] - self.position[0]) / self.window_width,
+            (self.target_position[1] - self.position[1]) / self.window_height,
+            self.speed[0] / self.max_speed,
+            self.speed[1] / self.max_speed,
+        )
+    
+    
     def reset(self):
         self.position = (self.window_width / 2, self.window_height / 2)
         self.speed = (0, 0)
         self.steps = 0
         
-        return (
-            (self.target_position[0] - self.position[0])/self.window_width, 
-            (self.target_position[1] - self.position[1])/self.window_height, 
-            (self.speed[0] / self.max_speed),
-            (self.speed[1] / self.max_speed)
-        )
+        return self.get_observation()
 
 
     def step(self, action: tuple[float, float]):
@@ -111,12 +115,7 @@ class Environment:
         self.speed = (vx, vy)
         self.position = (x, y)
         
-        observation = (
-            (self.target_position[0] - self.position[0])/self.window_width, 
-            (self.target_position[1] - self.position[1])/self.window_height, 
-            (self.speed[0] / self.max_speed),
-            (self.speed[1] / self.max_speed)
-        )
+        observation = self.get_observation()
         
         self.steps += 1
         
@@ -131,24 +130,3 @@ class Environment:
             truncated = True
         
         return (observation, reward, terminated, truncated)
-
-
-env = Environment()
-obs = env.reset()
-print(obs)
-print(env.step((1, 0)))
-
-env.reset()
-env.step((1, 0))
-result = env.step((1, 0))
-print(result)
-
-env.reset()
-env.step((1, 0))
-env.step((1, 0))
-result = env.step((-1, 0))
-print(result)
-
-env.reset()
-result = env.step((10, 0))
-print(result)

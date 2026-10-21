@@ -218,6 +218,56 @@ class TestEnvironment(unittest.TestCase):
 
         with self.assertRaises(TypeError):
             env.step(("abc", 0))
+    
+    def test_relative_position_sign(self):
+        env = Environment(target=(500, 200))
+        env.position = (300, 300)
+
+        observation = env.get_observation()
+
+        self.assertGreater(observation[0], 0)
+        self.assertLess(observation[1], 0)
+    
+    def test_normalized_speed_bounds(self):
+        env = Environment()
+        env.speed = (env.max_speed, -env.max_speed)
+
+        observation = env.get_observation()
+
+        self.assertGreaterEqual(observation[2], -1)
+        self.assertLessEqual(observation[2], 1)
+        self.assertGreaterEqual(observation[3], -1)
+        self.assertLessEqual(observation[3], 1)
+    
+    def test_inertia_without_acceleration(self):
+        env = Environment()
+        env.position = (400, 300)
+        env.speed = (3, 2)
+
+        env.step((0, 0))
+
+        self.assertEqual(env.speed, (3, 2))
+        self.assertEqual(env.position, (403, 302))
+    
+    def test_velocity_resets_at_boundary(self):
+        env = Environment()
+        env.position = (799, 300)
+        env.speed = (5, 0)
+
+        env.step((1, 0))
+
+        self.assertEqual(env.position, (800, 300))
+        self.assertEqual(env.speed, (0, 0))
+        
+    def test_slides_along_boundary(self):
+        env = Environment()
+        env.position = (800, 300)
+        env.speed = (0, 2)
+
+        env.step((0, 1))
+
+        self.assertEqual(env.position, (800, 303))
+        self.assertEqual(env.speed, (0, 3))
 
 
 if __name__ == "__main__":
