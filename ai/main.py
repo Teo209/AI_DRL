@@ -1,7 +1,7 @@
 from environment.environment import Environment
 from environment.render import Renderer
 
-environment = Environment(800, 600, (200, 350), 20, 5, 1000)
+environment = Environment(800, 600, (70, 76), 20, 5, 1000)
 renderer = Renderer(environment, (40, 40))
 
 observation = environment.reset()
