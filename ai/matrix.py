@@ -9,6 +9,19 @@ def relu(x):
     return np.maximum(0, x)
 
 
-def forward(x, weights, bias):
+activation_types = {
+    "relu": relu,
+}
+
+
+def forward(x, weights, bias, activation=None):
     z = dense(x, weights, bias)
-    return relu(z)
+    
+    if activation is None:
+        return z
+    
+    if activation in activation_types:
+        return activation_types[activation](z)
+    
+    raise ValueError("Invalid activation type!")
+    
